@@ -1,0 +1,177 @@
+<title>3DMM Magic Patcher</title>
+<script src="jquery.js"></script>
+<script src="FileSaver.js"></script>
+<style>
+label.big-option{
+	display: block;
+}
+span.patch-description{
+	font-size: smaller;
+}
+span.patch-name{
+	font-weight: bold;
+
+}
+input[type='checkbox']{
+	size: 16px;
+
+}
+tr.conflict{
+	color: black;
+	background: repeat url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAQCAIAAACk6KkqAAAAaUlEQVQYlW3OMQoFIQxF0fufpIuN+9+dKxDSSeAX40xjUl14p8hvzrnWAgBJY4zTEcF7vfevlZlPtdbM7Om9tz7i7l9HhEqemSo5oJKf4eaASg6o5IBK3lpTyd1dJTczlfy8e/Mz3Bz4Axx5R9vZFyjcAAAAAElFTkSuQmCC);
+
+}
+div.disclaimer{
+	margin-top: 1em;
+
+}
+b.backup{
+	color: red;
+	background:white;
+}
+</style>
+
+
+
+<form>
+	<table border=1><tr><td colspan="2"><b>Select your 3DMOVIE.EXE/v3dmm.exe file:</b><br /><input type="file" id="exefile" /></td></tr>
+	<tr class="header"><td colspan="2"><b>Available patches:</b></td></tr>
+	<tr class="patch"><td colspan="2">Select a file to see patches</td></tr>
+
+
+	<tr><td colspan="2" align="right" ><button id="save-patched-file">Save patched file</button></td></tr>
+
+	</table>
+
+
+<script>
+	var fReader = new FileReader();
+	var patches = null;
+	var filename = null;
+	fReader.onload = function (event) {
+		loadProgress.exe=true;
+		tryInitOptions();
+	};
+	function parseHexString(hex){
+		var rawhex=hex.replace(/ /g, '');
+		var buffer = new Uint8Array(rawhex.length/2);
+		for(var i=0;i<buffer.length;i++){
+			buffer[i]=parseInt(rawhex.substring(i*2,(i+1)*2),16)
+		}
+		return buffer;
+	}
+	function getPatchState(patch){
+		var states={'orig':0,'repl':0,'unk':0,'total':0};
+		$.each(patch['chunks'], function(patchi, chunk) {
+			var orig = parseHexString(chunk.original);
+			var repl = parseHexString(chunk.replacement);
+			var data = new Uint8Array(fReader.result,chunk.offset,orig.length);
+
+			
+			for(var i=0;i<data.length;i++){
+				states.total++;
+				if(data[i]==orig[i]){
+					states.orig++;
+				}
+				if(data[i]==repl[i]){
+					states.repl++;
+				}else if(data[i]!=orig[i]){
+					states.unk++;
+				}
+			}
+		});	
+		if (states['unk']>0){
+			return 'unknown';
+		}else if(states.orig==states.total){
+			return 'original';
+		}else if(states.repl==states.total){
+			return 'patched';
+		}else{
+			return 'unknown';
+		}
+	}
+	var loadProgress={};
+	$.getJSON('patches.json', function(patch_data) {
+		patches = patch_data['patches'];
+		$('#update-date').text(patch_data['updated'])
+		loadProgress.json=true;
+		tryInitOptions();
+	});
+	function tryInitOptions(){
+		if(loadProgress.json && loadProgress.exe){
+			initOptions();
+		}
+	}
+	function initOptions(){
+		$('tr.patch').remove();
+		$.each(patches,function(name,patch){
+			var patchHTML = $('<tr class="patch"><td><label class="big-option"><input type="checkbox" /><span class="patch-name"> </span>'+
+				'<br /><span class="patch-description"> </span></label></td></tr>');
+			$(patchHTML).find('.patch-name').text(name);
+			$(patchHTML).find('.patch-description').text(patch['description']);
+			$(patchHTML).data('patch',name);
+			$(patchHTML).data('patch',name);
+			state=getPatchState(patch);
+			$(patchHTML).data('broken',state=='unknown');
+			if(state=='unknown'){
+				$(patchHTML).addClass('conflict').find('input').prop("disabled", true);
+		
+			}else {
+				$(patchHTML).find('input').prop('checked', state=='patched');
+			}
+			$('tr.header').after(patchHTML);
+		});
+		$('#save-patched-file').prop("disabled", false);
+	}
+	function readUploadedFile(){
+		if (this.files.length > 0){
+			fReader.readAsArrayBuffer(this.files[0]);
+			filename = this.files[0].name;
+
+		}
+	}
+	$('#exefile').on("change",readUploadedFile);
+	$('#exefile').change();
+
+	$('#save-patched-file').click(function(event){
+		event.preventDefault();
+
+		var scratch = new Uint8Array(fReader.result);
+
+		$('tr.patch').each(function(){
+			if ($(this).data('broken')){
+				return;
+			}
+			var applyKey = $(this).find('input').is(':checked') ? 'replacement' : 'original';
+			var patch = patches[$(this).data('patch')];
+			$.each(patch.chunks,function(_,chunk){
+				var data = parseHexString(chunk[applyKey]);
+				var offset = chunk.offset;
+				for(var i=0;i<data.length;i++){
+					scratch[offset+i]=data[i];
+				}
+			});
+		});
+
+		var blob = new Blob([scratch], {type: "application/exe"});
+
+		var patchedName = filename.replace(/(\..+)$/,'')+'-patched.exe';
+
+		saveAs(blob, patchedName);
+		return false;
+	}).prop("disabled", true);
+
+</script>
+
+<div class="disclaimer">
+<b>Note:</b><br />
+3D Movie Maker is copyright Microsoft, 1995 or 1996 abouts. <b class="backup">Make a backup of your 3DMOVIE.EXE/v3dmm.exe files!</b> <br />
+
+This site doesn't actually upload and download your file. It's all done in-browser, so there's no slow file transfer and no copyright infringement. <br />
+
+So far this has only been tested on the US 3DMOVIE.EXE, If I can locate any other languages I'll add support for them too. <br />
+
+This site has been tested in Chrome 27 and Firefox 22. Other browsers may work if they're not named "Internet Explorer". 
+
+<p><a href="patches.json">Patch definitions</a> last updated on <span id="update-date">some time</span></p>
+</div>

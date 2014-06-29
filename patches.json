@@ -1,0 +1,120 @@
+{
+    "updated": "2013-07-01",
+    "patches": {
+        "Run multiple 3DMMs at once": {
+            "description": "3DMM normally just activates the first copy of 3DMM if you try to run it twice, this will make each instance independent.",
+            "chunks": [
+                {
+                    "offset": 27455,
+                    "replacement": "E84C6603008BCEE8550400008BCE85C0EB14E8AA040000C78680000000010000",
+                    "original": "E84C6603008BCEE8550400008BCE85C07414E8AA040000C78680000000010000"
+                }
+            ]
+        },
+        "Keep playing in background": {
+            "description": "Prevents 3DMM from pausing the movie just because you switched to another window.",
+            "chunks": [
+                {
+                    "offset": 164798,
+                    "replacement": "846301000083F81C909090909090E9560300003D1201000077140F84EB010000",
+                    "original": "846301000083F81C0F8442010000E9560300003D1201000077140F84EB010000"
+                }
+            ]
+        },
+        "Wireframe Mode": {
+            "description": "Causes 3DMM to display all objects as wireframes. This has no use, but is neat.",
+            "chunks": [
+                {
+                    "offset": 914548,
+                    "replacement": "1AD8",
+                    "original": "DEAF"
+                }
+            ]
+        },
+        "Don't set volume": {
+            "description": "3DMM normally adjusts system-wide volume levels, disabling it may help with sound errors on post-XP OSes.",
+            "chunks": [
+                {
+                    "offset": 468176,
+                    "replacement": "8B4C24048379080074128B490C68FFFFFFFF51FF1500DB4E00C20800B805000000C20800",
+                    "original": "8B4C24048379080074128B4424088B490C5051FF1500DB4E00C20800B805000000C20800"
+                }
+            ]
+        },
+        "Don't adjust key-repeat": {
+            "description": "3DMM sets key-repeat at several points, and often fails to reset them to original values, resulting in your key-repeat being set incredibly slow.",
+            "chunks": [
+                {
+                    "offset": 664876,
+                    "replacement": "CCCCCCCCC33DB89E",
+                    "original": "CCCCCCCC833DB89E"
+                },
+                {
+                    "offset": 664973,
+                    "replacement": "CC CC CC C3 3D B8 9E 4E",
+                    "original": "CC CC CC 83 3D B8 9E 4E"
+                }
+            ]
+        },
+        "Skip loading screens": {
+            "description": "3DMM displays the Microsoft Home and 3D Movie Maker credits scenes for far too long. This turns them off.",
+            "chunks": [
+                {
+                    "offset": 27791,
+                    "replacement": "0F 84 44 01 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 8B CE",
+                    "original": "0F 84 44 01 00 00 8B 0D A4 39 4E 00 E8 D0 2B 01 00 2B C3 3D A0 0F 00 00 72 EC 8B CE"
+                },
+                {
+                    "offset": 27914,
+                    "replacement": "0F 84 C9 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 6A 00",
+                    "original": "0F 84 C9 00 00 00 8B 0D A4 39 4E 00 E8 55 2B 01 00 2B C3 3D A0 0F 00 00 72 EC 6A 00"
+                }
+            ]
+        },
+        "No startup sound": {
+            "description": "3DMM plays a loud noise when you start it. This turns it off, similar to how v3dmm does when silent startup is enabled.",
+            "chunks": [
+                {
+                    "offset": 27843,
+                    "replacement": "8B D8 8B CE 90 90 90 90 90 90 90 90 90 90 90 90 90 8B CE E8 55 11 00 00 85 C0",
+                    "original":    "8B D8 8B CE E8 24 1B 00 00 85 C0 0F 84 05 01 00 00 8B CE E8 55 11 00 00 85 C0"
+                }
+
+            ]
+        },
+        "No studio sounds": {
+            "description": "3DMM sounds like a baby activity center when making movies. This silences the studio while letting the movies and sound selections still play.",
+            "chunks": [
+                {
+                    "offset": 874996,
+                    "replacement": "50 03 44 00 97 03 44 00 10 04 44 00",
+                    "original":    "50 03 44 00 A0 03 44 00 10 04 44 00"
+                },
+                {
+                    "offset": 259987,
+                    "replacement": "83 C4 08 C3 8B 44 E4 24 83 F8 00 75 66 83 EC 08 8D 44 24 00",
+                    "original":    "83 C4 08 C3 CC CC CC CC CC CC CC CC CC 83 EC 08 8D 44 24 00"
+                },
+                {
+                    "offset": 260096,
+                    "replacement": "83 C4 08 C2 24 00 83 F8 02 75 F8 EB 93 CC CC CC 83 EC 08 53",
+                    "original":    "83 C4 08 C2 24 00 CC CC CC CC CC CC CC CC CC CC 83 EC 08 53"
+                }
+            ]
+        },
+        "No scene fades": {
+            "description": "3DMM's pixelrific scene fade takes quite a while and is very grating to some people. This turns all scene fades into straight cuts.",
+            "chunks": [
+                {
+                    "offset": 661425,
+                    "replacement": "E8 1A 71 F7 FF B8 03 00 00 00 90 83 F8 04 0F 87 D1 00 00 00",
+                    "original":    "E8 1A 71 F7 FF 8B 86 A0 01 00 00 83 F8 04 0F 87 D1 00 00 00"
+
+
+                }
+            ]
+        }
+
+        
+    }
+}
