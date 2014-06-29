@@ -63,21 +63,25 @@ b.backup{
 	function getPatchState(patch){
 		var states={'orig':0,'repl':0,'unk':0,'total':0};
 		$.each(patch['chunks'], function(patchi, chunk) {
-			var orig = parseHexString(chunk.original);
-			var repl = parseHexString(chunk.replacement);
-			var data = new Uint8Array(fReader.result,chunk.offset,orig.length);
+			try{
+				var orig = parseHexString(chunk.original);
+				var repl = parseHexString(chunk.replacement);
+				var data = new Uint8Array(fReader.result,chunk.offset,orig.length);
 
-			
-			for(var i=0;i<data.length;i++){
-				states.total++;
-				if(data[i]==orig[i]){
-					states.orig++;
+				
+				for(var i=0;i<data.length;i++){
+					states.total++;
+					if(data[i]==orig[i]){
+						states.orig++;
+					}
+					if(data[i]==repl[i]){
+						states.repl++;
+					}else if(data[i]!=orig[i]){
+						states.unk++;
+					}
 				}
-				if(data[i]==repl[i]){
-					states.repl++;
-				}else if(data[i]!=orig[i]){
-					states.unk++;
-				}
+			}catch(err){
+				states.unk++; // Disable this chunk if we failed to match
 			}
 		});	
 		if (states['unk']>0){
