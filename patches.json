@@ -1,5 +1,5 @@
 {
-    "updated": "2013-07-01",
+    "updated": "2014-06-29",
     "patches": {
         "Run multiple 3DMMs at once": {
             "description": "3DMM normally just activates the first copy of 3DMM if you try to run it twice, this will make each instance independent.",
@@ -31,6 +31,21 @@
                 }
             ]
         },
+				"Flat-shaded Mode":{
+					"description": "Causes 3DMM to display all non-textured objects with falt shading.",
+					"chunks":[
+						{	
+							"offset": 729459,
+							"original":   "E82EC5FCFF",
+							"replacement":"E86E000000"
+						},
+						{	
+							"offset": 729573,
+							"original":   "CCCCCCCCCCCCCCCCCCCCCC",
+							"replacement":"CC836014FBE9B7C4FCFFCC"
+						}
+					]
+				},
         "Don't set volume": {
             "description": "3DMM normally adjusts system-wide volume levels, disabling it may help with sound errors on post-XP OSes.",
             "chunks": [
