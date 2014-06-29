@@ -15,7 +15,7 @@
             "description": "Prevents 3DMM from pausing the movie just because you switched to another window.",
             "chunks": [
                 {
-                    "offset": 164798,
+                    "offset": -164798,
                     "replacement": "846301000083F81C909090909090E9560300003D1201000077140F84EB010000",
                     "original": "846301000083F81C0F8442010000E9560300003D1201000077140F84EB010000"
                 }
